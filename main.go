@@ -1,6 +1,7 @@
 package main
 
 import (
+	"chat/routers"
 	"github.com/gin-gonic/gin"
 	"chat/tools"
 )
@@ -13,5 +14,6 @@ func main() {
 	//设置运行模式
 	tools.ParsingDbConfig(cfg)
 	app := gin.Default()
+	routers.LoadRouter(app)
 	_=app.Run(cfg.AppHost+":"+cfg.AppPort)
 }

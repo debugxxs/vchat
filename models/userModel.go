@@ -6,6 +6,7 @@ type User struct {
 	Phone	string	`json:"phone"xorm:"varchar(12) phone"`
 	Email 	string	`json:"eMail" xorm:"varchar(64) eMail"`
 	Avatar 	string	`json:"avatar" xorm:"varchar(64) avatar"`
+	Position string	`json:"position" xorm:"varchar(64) position"`
 	LoginTime string	`json:"loginTime"xorm:"updated"`
 	PassId	int64		`json:"passId" xorm:"passId"`
 	RoleId	int64	`json:"roleId" xorm:"roleId"`
