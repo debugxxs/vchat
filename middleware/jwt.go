@@ -3,7 +3,6 @@ package middleware
 import (
 	"chat/models"
 	"chat/service"
-	"fmt"
 	jwt "github.com/appleboy/gin-jwt/v2"
 	"github.com/gin-gonic/gin"
 	"github.com/google/logger"
@@ -34,12 +33,10 @@ func (aj *AuthJwt) AuthMiddlewareFunc(authRoleFunc AuthRoleFunction)(authMiddlew
 					identityKey: v.UserName,
 				}
 			}
-			fmt.Println("false")
 			return jwt.MapClaims{}
 		},
 		IdentityHandler: func(context *gin.Context) interface{} {
 			claims :=jwt.ExtractClaims(context)
-			fmt.Println(claims)
 			return &models.User{
 				UserName: claims[identityKey].(string),
 			}
@@ -52,7 +49,6 @@ func (aj *AuthJwt) AuthMiddlewareFunc(authRoleFunc AuthRoleFunction)(authMiddlew
 			}
 			GlobalUserName = userPass.UserName
 			if aj.UserLoginFunction(userPass.UserName,userPass.PassWord){
-				fmt.Println("login",userPass.UserName)
 				return &models.User{
 					UserName: userPass.UserName,
 				},nil

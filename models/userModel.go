@@ -8,9 +8,9 @@ type User struct {
 	Avatar 	string	`json:"avatar" xorm:"varchar(64) avatar"`
 	Position string	`json:"position" xorm:"varchar(64) position"`
 	LoginTime string	`json:"loginTime"xorm:"updated"`
-	PassId	int64		`json:"passId" xorm:"passId"`
-	RoleId	int64	`json:"roleId" xorm:"roleId"`
-	OrganizationId int64	`json:"organizationid"xorm:"organizationId"`
+	PassId	int64		`json:"passId" xorm:"default 0 passId"`
+	RoleId	int64	`json:"roleId" xorm:"default 0 roleId"`
+	OrganizationId int64	`json:"organizationId"xorm:"default 0 organizationId"`
 }
  type Password struct {
  	PassId int64	`json:"pass_id" xorm:"pk autoincr passId"`

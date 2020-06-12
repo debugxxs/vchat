@@ -26,8 +26,9 @@ func LoadRouter(engine *gin.Engine)  {
 	adminAuthMinddleware := myjwt.AuthMiddlewareFunc(myjwt.AdminAuthMiddleware)
 	adminApi := engine.Group("/api/v1")
 	adminApi.Use(adminAuthMinddleware.MiddlewareFunc())
-	{
-		adminApi.GET("/users",adminUser.AddUsers)
+	{	//用户表的增删改查
+		adminApi.POST("/users",adminUser.AddUsers)
+		adminApi.GET("/users",adminApi.GetUsers)
 	}
 
 }
