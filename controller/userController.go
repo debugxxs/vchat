@@ -9,9 +9,7 @@ type UserController struct {
 	service.UserService
 }
 
-func (uc UserController)Hello(c *gin.Context)  {
-	c.JSON(200,gin.H{
-		"code":200,
-		"data":c.FullPath(),
-	})
+func (uc UserController) IndexHandel(c *gin.Context) {
+	//获取组织列表中的好友
+	
 }

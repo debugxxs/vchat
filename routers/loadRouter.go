@@ -21,14 +21,26 @@ func LoadRouter(engine *gin.Engine)  {
 	}
 	userApi.Use(allAuthMiddleware.MiddlewareFunc())
 	{
-		userApi.GET("/hello",user.Hello)
+		userApi.GET("/index",user.IndexHandel)
 	}
-	adminAuthMinddleware := myjwt.AuthMiddlewareFunc(myjwt.AdminAuthMiddleware)
+	adminAuthMiddleware := myjwt.AuthMiddlewareFunc(myjwt.AdminAuthMiddleware)
 	adminApi := engine.Group("/api/v1")
-	adminApi.Use(adminAuthMinddleware.MiddlewareFunc())
+	adminApi.Use(adminAuthMiddleware.MiddlewareFunc())
 	{	//用户表的增删改查
 		adminApi.POST("/users",adminUser.AddUsers)
-		adminApi.GET("/users",adminApi.GetUsers)
+		adminApi.GET("/users",adminUser.GetUsers)
+		adminApi.PUT("/users/:userId",adminUser.UpDataUserInfo)
+		adminApi.DELETE("/user/:userId",adminUser.DelUserInfo)
+		adminApi.GET("/users/delUser",adminUser.GetDelUsers)
+		//role 表增删改查
+		adminApi.POST("/roles",adminUser.AddRoles)
+		adminApi.GET("/roles",adminUser.QueryAllRole)
+		adminApi.DELETE("/roles/:roleId",adminUser.DelRoleName)
+		//组织架构路由 增删改查
+		adminApi.POST("/Organization",adminUser.AddOrganization)
+		adminApi.PUT("/Organization/:organizationId",adminUser.UpDataOrganization)
+		adminApi.DELETE("/Organization/:organizationId",adminUser.DelOrganization)
+		adminApi.GET("/Organizations",adminUser.GetAllOrganizations)
 	}
 
 }
