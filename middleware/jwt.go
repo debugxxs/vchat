@@ -98,9 +98,15 @@ func (aj *AuthJwt) AuthMiddlewareFunc(authRoleFunc AuthRoleFunction) (authMiddle
 func (aj AuthJwt) AllAuthMiddleware(data interface{}, c *gin.Context) bool {
 	return true
 }
+
+
+
 func (aj AuthJwt) NoRouteHandler(c *gin.Context) {
 	c.JSON(404, gin.H{"code": 404, "message": "访问的路径不存在"})
 }
+
+
+
 func (aj AuthJwt) AdminAuthMiddleware(data interface{}, c *gin.Context) bool {
 	if v, ok := data.(*models.User); ok {
 		_, roleName := aj.CheckUserRole(v.UserName)

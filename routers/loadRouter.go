@@ -37,10 +37,10 @@ func LoadRouter(engine *gin.Engine)  {
 		adminApi.GET("/roles",adminUser.QueryAllRole)
 		adminApi.DELETE("/roles/:roleId",adminUser.DelRoleName)
 		//组织架构路由 增删改查
-		adminApi.POST("/Organization",adminUser.AddOrganization)
-		adminApi.PUT("/Organization/:organizationId",adminUser.UpDataOrganization)
-		adminApi.DELETE("/Organization/:organizationId",adminUser.DelOrganization)
-		adminApi.GET("/Organizations",adminUser.GetAllOrganizations)
+		adminApi.POST("/organizations",adminUser.AddOrganization)
+		adminApi.PUT("/organization/:organizationId",adminUser.UpDataOrganization)
+		adminApi.DELETE("/organization/:organizationId",adminUser.DelOrganization)
+		adminApi.GET("/organizations",adminUser.GetAllOrganizations)
 	}
 
 }

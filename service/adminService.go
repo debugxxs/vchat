@@ -1,9 +1,9 @@
 package service
 
 import (
+	"chat/common"
 	"chat/dao"
 	"chat/models"
-	"fmt"
 	"strconv"
 )
 
@@ -20,36 +20,41 @@ func (as *AdminService) CheckUsers(user models.User) (string, bool) {
 	}
 }
 //CheckAllUsers 处理查询所有用户信息查询
-func (as AdminService) CheckAllUsers() (string, []models.UserAllData) {
+func (as AdminService) CheckAllUsers() (string, bool,[]models.UserAllData) {
 	//1.先查询user表全部信息
 	//2 判断对应id是否为0，如果是0，就不去查询对应数值，如果不是就返回对应的信息表
 	//3处理数据信息
 	adminDao := dao.NewAdminDao()
 	userData := make([]models.UserAllData, 0)
 
-	msg, users := adminDao.QueryUsers()
-	for _, v := range users {
-		if v.UserName == "admin" {
-			continue
+	msg, isExit,users := adminDao.QueryUsers()
+	if isExit{
+		for _, v := range users {
+			if v.UserName == "admin" {
+				continue
+			}
+			if v.RoleId != 0 || v.OrganizationId != 0 {
+				_, roleName := adminDao.QueryUserRoleName(v.UserId)
+				_, Organization := adminDao.QueryUserOrganizationName(v.UserId)
+				userRpData := models.UserAllData{UserId: v.UserId, UserName: v.UserName, Phone: v.Phone, Avatar: v.Avatar, Email: v.Email, Position: v.Position, RoleName: roleName, OrganizationName: Organization}
+				userData = append(userData, userRpData)
+			} else {
+				userRpData := models.UserAllData{UserId: v.UserId, UserName: v.UserName, Phone: v.Phone, Avatar: v.Avatar, Email: v.Email, Position: v.Position, RoleName: "", OrganizationName: models.Organization{}}
+				userData = append(userData, userRpData)
+			}
 		}
-		if v.RoleId != 0 || v.OrganizationId != 0 {
-			_, roleName := adminDao.QueryUserRoleName(v.UserId)
-			_, Organization := adminDao.QueryUserOrganizationName(v.UserId)
-			userRpData := models.UserAllData{UserId: v.UserId, UserName: v.UserName, Phone: v.Phone, Avatar: v.Avatar, Email: v.Email, Position: v.Position, RoleName: roleName, OrganizationName: Organization}
-			userData = append(userData, userRpData)
-		} else {
-			userRpData := models.UserAllData{UserId: v.UserId, UserName: v.UserName, Phone: v.Phone, Avatar: v.Avatar, Email: v.Email, Position: v.Position, RoleName: "", OrganizationName: models.Organization{}}
-			userData = append(userData, userRpData)
-		}
+		return msg, true,userData
+	}else {
+		return msg,false,userData
 	}
-	return msg, userData
+
 }
 //CheckUserUpDataInfo 用户更新数据方法
 func (as AdminService) CheckUserUpDataInfo(userid string, userInfo models.User) (string, bool) {
 	adminDao := dao.NewAdminDao()
 	userId, err := strconv.ParseInt(userid, 10, 64)
 	if err != nil {
-		return "用户id解析失败", false
+		return common.ResponseFailErr(err), false
 	}
 	msg, res := adminDao.QueryUserIsExit(userId)
 	if res {
@@ -67,7 +72,7 @@ func (as AdminService) CheckUserUpDataInfo(userid string, userInfo models.User) 
 func (as AdminService) CheckDelUser(userid string) (string, bool) {
 	userId, err := strconv.ParseInt(userid, 10, 64)
 	if err != nil {
-		return fmt.Sprintln("参数解析失败", err), false
+		return common.ResponseFailErr(err), false
 	}
 	adminDao := dao.NewAdminDao()
 	msg, result := adminDao.DelUser(userId)
@@ -78,22 +83,27 @@ func (as AdminService) CheckDelUser(userid string) (string, bool) {
 	}
 }
 //CheckDel 删除用户信息的返回
-func (as AdminService) CheckDel() (string, []models.UserAllData) {
+func (as AdminService) CheckDel() (string, bool,[]models.UserAllData) {
 	adminDao := dao.NewAdminDao()
 	delUserData := make([]models.UserAllData, 0)
-	msg, delUser := adminDao.QueryDelUser()
-	for _, v := range delUser {
-		if v.UserName == "admin" {
-			continue
+	msg,isExits, delUser := adminDao.QueryDelUser()
+	if isExits{
+		for _, v := range delUser {
+			if v.UserName == "admin" {
+				continue
+			}
+			if v.DeletedAt > 0 {
+				_, roleName := adminDao.QueryUserRoleName(v.UserId)
+				_, Organization := adminDao.QueryUserOrganizationName(v.UserId)
+				userRpData := models.UserAllData{UserId: v.UserId, UserName: v.UserName, Phone: v.Phone, Avatar: v.Avatar, Email: v.Email, Position: v.Position, RoleName: roleName, DeletedAt: v.DeletedAt, OrganizationName: Organization}
+				delUserData = append(delUserData, userRpData)
+			}
 		}
-		if v.DeletedAt > 0 {
-			_, roleName := adminDao.QueryUserRoleName(v.UserId)
-			_, Organization := adminDao.QueryUserOrganizationName(v.UserId)
-			userRpData := models.UserAllData{UserId: v.UserId, UserName: v.UserName, Phone: v.Phone, Avatar: v.Avatar, Email: v.Email, Position: v.Position, RoleName: roleName, DeletedAt: v.DeletedAt, OrganizationName: Organization}
-			delUserData = append(delUserData, userRpData)
-		}
+		return msg, true,delUserData
+	}else {
+		return msg,false,delUserData
 	}
-	return msg, delUserData
+
 }
 
 /*下面是role service内容*/
@@ -108,10 +118,10 @@ func (as AdminService)CheckAddRole(role models.Role)(string,bool){
 	}
 }
 //处理查询所有role数据
-func (as AdminService)CheckRoles()(string,[]models.Role){
+func (as AdminService)CheckRoles()(string,bool,[]models.Role){
 	adminDao := dao.NewAdminDao()
-	msg,roles:=adminDao.QueryAllRole()
-	return msg,roles
+	msg,queryIsOk,roles:=adminDao.QueryAllRole()
+	return msg,queryIsOk,roles
 }
 //删除数据处理
 func (as AdminService)CheckDelRole(roleId int64)(string,bool){
@@ -140,7 +150,7 @@ func (as AdminService)CheckAddOrganization(Organization models.Organization)(str
 func (as AdminService)CheckUpDataOrganization(organizationid string,Organization models.Organization)(string,bool){
 	OrganizationId,err := strconv.ParseInt(organizationid,10,64)
 	if err!=nil{
-		return fmt.Sprintln("参数解析失败",err),false
+		return common.ResponseFailErr(err),false
 	}
 	adminDao:= dao.NewAdminDao()
 	msg,result:=adminDao.UpDataOrganizationData(OrganizationId,Organization)
@@ -155,7 +165,7 @@ func (as AdminService)CheckDelOrganization(organizationid string)(string,bool){
 	adminDao := dao.NewAdminDao()
 	OrganizationId,err := strconv.ParseInt(organizationid,10,64)
 	if err !=nil{
-		return fmt.Sprintln("参数解析错误",err),false
+		return common.ResponseFailErr(err),false
 	}
 	msg,result:=adminDao.DelOrganizationData(OrganizationId)
 	if result !=0{
@@ -165,8 +175,8 @@ func (as AdminService)CheckDelOrganization(organizationid string)(string,bool){
 	}
 }
 //CheckAllOrganizations 处理获取所有组织架构信息service
-func (as AdminService)CheckAllOrganizations()(string,[]models.Organization){
+func (as AdminService)CheckAllOrganizations()(string,bool,[]models.Organization){
 	adminDao :=dao.NewAdminDao()
-	msg,organizations:=adminDao.GetAllOrganizationsData()
-	return msg,organizations
+	msg,isOk,organizations:=adminDao.GetAllOrganizationsData()
+	return msg,isOk,organizations
 }
