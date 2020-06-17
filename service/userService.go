@@ -1,7 +1,9 @@
 package service
 
 import (
+	"chat/common"
 	"chat/dao"
+	"chat/models"
 )
 
 type UserService struct {
@@ -44,4 +46,17 @@ func (us UserService) GetUserInfo(userName string) interface{} {
 		"userPosition": user.Position,
 	}
 	return userData
+}
+
+
+
+/*以下是密码service*/
+
+func (us UserService)CheckPass(userName string,userPass models.Password)(string,bool){
+	userDao:=dao.NewUserDao()
+	if userName == ""{
+		return common.ParamsParseFail,false
+	}
+	userId:=userDao.QueryUserId(userName)
+	return  userDao.AddUserPassWord(userId,userPass)
 }

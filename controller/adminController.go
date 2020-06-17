@@ -4,7 +4,6 @@ import (
 	"chat/common"
 	"chat/models"
 	"chat/service"
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"strconv"
 )
@@ -90,7 +89,6 @@ func (ac AdminController)AddRoles(c *gin.Context){
 		common.ResponseDataFail(errParaMsg,c)
 		return
 	}
-	fmt.Println("参数输出",role)
 	//将参数给service 层处理
 	msg,result:=ac.CheckAddRole(role)
 	if result {

@@ -180,3 +180,5 @@ func (as AdminService)CheckAllOrganizations()(string,bool,[]models.Organization)
 	msg,isOk,organizations:=adminDao.GetAllOrganizationsData()
 	return msg,isOk,organizations
 }
+
+

@@ -21,6 +21,7 @@ const (
 	UpDataSuccess		string =	"数据更新成功"
 	UpDataFail			string = 	"数据更新失败"
 	RoleNameExits		string = 	"用户角色已存在"
+	ParamsParseFail		string	=	"参数解析失败"
 )
 
 func ResponseSuccessData(msg string,data interface{},c *gin.Context)  {

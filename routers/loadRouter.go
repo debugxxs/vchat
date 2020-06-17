@@ -22,6 +22,7 @@ func LoadRouter(engine *gin.Engine)  {
 	userApi.Use(allAuthMiddleware.MiddlewareFunc())
 	{
 		userApi.GET("/index",user.IndexHandel)
+		userApi.POST("/password",user.AddAndModifyPass)
 	}
 	adminAuthMiddleware := myjwt.AuthMiddlewareFunc(myjwt.AdminAuthMiddleware)
 	adminApi := engine.Group("/api/v1")
