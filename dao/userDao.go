@@ -47,7 +47,7 @@ func (ud UserDao) RoleQuery(userName string) (string, string) {
 }
 
 
-
+//QueryUserId 查询用户id
 func(ud UserDao)QueryUserId(userName string)int64{
 	var user models.User
 	ud.Table("user").Where("userName = ? ",userName).Get(&user)
@@ -55,6 +55,21 @@ func(ud UserDao)QueryUserId(userName string)int64{
 }
 
 
+//InsertUserToken 插入用户正在登陆的token
+func (ud UserDao)InsertUserToken(userName ,token string)  {
+	userId := ud.QueryUserId(userName)
+	user := models.User{UserName: userName,Token: token}
+	_, _ = ud.Table("user").ID(userId).Update(&user)
+}
+//QueryAllUser 查询所有用户信息
+func (ud UserDao)QueryUserOrganization(organizationId int64)(string,bool,[]models.User)  {
+	var users []models.User
+	err :=ud.Table("user").Where("organizationId = ?",organizationId).Find(&users)
+	if err !=nil{
+		return common.ResponseFailErr(err),false,users
+	}
+	return common.QueryDataSuccess,true,users
+}
 //UserQuery user表数据查询
 func (ud UserDao) UserQuery(userName string) (string, models.User) {
 	user := models.User{}
@@ -65,8 +80,17 @@ func (ud UserDao) UserQuery(userName string) (string, models.User) {
 	return common.QueryDataSuccess, user
 }
 
-/*以下是密码表数据库操作*/
 
+
+//QueryUserToken 查询用户数据库token
+func (ud UserDao)QueryUserToken(userName string) string{
+	user := models.User{}
+	_, _ = ud.Table("user").Where("userName = ?", userName).Get(&user)
+	return user.Token
+}
+
+/*以下是密码表数据库操作*/
+//AddUserPassWord 增加和修改密码
 func (ud UserDao)AddUserPassWord(userId int64,userPass models.Password)(string,bool){
 	//先查询密码表是否存在相同密码
 	var userPw models.Password
@@ -106,9 +130,21 @@ func (ud UserDao)AddUserPassWord(userId int64,userPass models.Password)(string,b
 		//还需要分配id给用户，还是需要查询一次密码
 	}
 }
-
+//QueryUserPass 查询用户密码id
 func (ud UserDao)QueryUserPass(password string)int64{
 	var userPass models.Password
 	ud.Table("password").Where("passWord = ? ",password).Get(&userPass)
 	return userPass.PassId
+}
+
+
+//获取所有的组织列表
+//GetAllOrganization 查询所有的组织架构
+func (ud UserDao)GetAllOrganization()(string,bool,[]models.Organization)  {
+	var organizations []models.Organization
+	err :=ud.Table("organization").Distinct("organizationId","topLayer","twoLayer","threeLayer").Find(&organizations)
+	if err !=nil{
+		return common.ResponseFailErr(err),false,organizations
+	}
+	return common.QueryDataSuccess,true,organizations
 }

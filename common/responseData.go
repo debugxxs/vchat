@@ -22,6 +22,7 @@ const (
 	UpDataFail			string = 	"数据更新失败"
 	RoleNameExits		string = 	"用户角色已存在"
 	ParamsParseFail		string	=	"参数解析失败"
+	ModifyPassErr		string	=	"修改密码错误，请传入正在登陆的用户名来修改密码"
 )
 
 func ResponseSuccessData(msg string,data interface{},c *gin.Context)  {

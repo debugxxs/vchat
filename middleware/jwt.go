@@ -58,6 +58,8 @@ func (aj *AuthJwt) AuthMiddlewareFunc(authRoleFunc AuthRoleFunction) (authMiddle
 		Authorizator: authRoleFunc,
 		LoginResponse: func(c *gin.Context, code int, token string, expire time.Time) {
 			userData := aj.GetUserInfo(GlobalUserName)
+			//将taken保存数据库
+			aj.InsertTk(GlobalUserName,token)
 			c.JSON(http.StatusOK, gin.H{
 				"code":  code,
 				"msg":   "登录成功",

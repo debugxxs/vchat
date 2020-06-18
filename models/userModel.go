@@ -8,13 +8,14 @@ type User struct {
 	Avatar         string `json:"avatar" xorm:"varchar(64) avatar"`
 	Position       string `json:"position" xorm:"varchar(64) position"`
 	LoginTime      string `json:"loginTime"xorm:"updated"`
-	PassId         int64  `json:"passId" xorm:"default 0 passId"`
-	RoleId         int64  `json:"roleId" xorm:"default 0 roleId"`
+	Token		 	string	`json:"token" xorm:"varchar(254) taken"`
+	PassId         int64  `json:"passId" xorm:"default 1 passId"`
+	RoleId         int64  `json:"roleId" xorm:"default 2 roleId"`
 	OrganizationId int64  `json:"organizationId"xorm:"default 0 organizationId"`
 	DeletedAt      int64  `xorm:"deleted"`
 }
 type Password struct {
-	PassId   int64  `json:"pass_id" xorm:"pk autoincr passId"`
+	PassId   int64  `json:"passId" xorm:"pk autoincr passId"`
 	PassWord string `json:"passWord"xorm:"varchar(64) passWord"`
 }
 type UserPass struct {
@@ -33,4 +34,10 @@ type UserAllData struct {
 	RoleName         string       `json:"roleName"`
 	OrganizationName Organization `json:"organizationName"`
 	DeletedAt        int64        `json:"deletedAt"`
+}
+
+
+type UserListData struct {
+	UserId int64	`json:"userId"`
+	UserName string	`json:"userName"`
 }
