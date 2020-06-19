@@ -4,7 +4,6 @@ import (
 	"chat/common"
 	"chat/models"
 	"chat/service"
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"strings"
 )
@@ -36,7 +35,6 @@ func (uc UserController)AddAndModifyPass(c *gin.Context){
 	}
 	auth := c.Request.Header.Get("Authorization")
 	handelList := strings.Split(auth," ")
-	fmt.Println(handelList[1])
 	tokenStr := handelList[1]
 	userName := userPass.UserName
 	msg,res:=uc.CheckPass(userName,tokenStr,userPass.Password)

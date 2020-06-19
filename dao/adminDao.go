@@ -124,7 +124,6 @@ func (ad AdminDao) DelUser(userId int64) (string, int64) {
 func (ad AdminDao) QueryDelUser() (string, bool,[]models.User) {
 	users := make([]models.User, 0)
 	err := ad.Table("user").Distinct("userId", "userName", "phone", "eMail", "avatar", "position", "roleId", "organizationId", "deleted_at").Unscoped().Find(&users)
-	fmt.Println(users)
 	if err != nil {
 		return common.ResponseFailErr(err),false, users
 	}
